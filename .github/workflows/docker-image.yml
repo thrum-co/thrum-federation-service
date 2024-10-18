@@ -1,0 +1,82 @@
+name: Build and Push Docker image
+
+on:
+  push:
+    branches:
+      - main  # or any other branch you want to trigger the workflow
+env:
+  PROJECT_ID: fake-app-323017
+  REGION: northamerica-northeast1
+  GAR_LOCATION: northamerica-northeast1-docker.pkg.dev/fake-app-323017/repo-1/
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: thrum/${{ github.event.repository.name }}:latest
+      - name: Fetch Workflow Run Details
+        if: ${{ failure() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const runId = process.env.GITHUB_RUN_ID
+            const repo = process.env.GITHUB_REPOSITORY
+            const [owner, repoName] = repo.split('/')
+            const { data } = await github.rest.actions.getWorkflowRun({
+              owner,
+              repo: repoName,
+              run_id: runId
+            })
+            return `Error: ${data.conclusion}\nURL: ${data.html_url}`
+          result-encoding: string
+
+  deploy_to_kubernetes:
+    name: Deploy to Kubernetes
+    needs: build_and_push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Kubernetes Context
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Deploy To Cluster
+        run: kubectl rollout restart deployment ${{ github.event.repository.name }}-deployment
+      - name: Fetch Workflow Run Details
+        if: ${{ failure() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const runId = process.env.GITHUB_RUN_ID
+            const repo = process.env.GITHUB_REPOSITORY
+            const [owner, repoName] = repo.split('/')
+            const { data } = await github.rest.actions.getWorkflowRun({
+              owner,
+              repo: repoName,
+              run_id: runId
+            })
+            return data
+          result-encoding: string

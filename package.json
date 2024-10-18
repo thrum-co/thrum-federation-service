@@ -1,0 +1,31 @@
+{
+  "author": {
+    "email": "joe@thrum.co",
+    "name": "Joe Kelly",
+    "url": "https://app.thrum.co",
+    "organization": "Thrum, Inc.",
+    "organizationUrl": "https://www.thrum.co"
+  },
+  "description": "A simple Apollo Federation Gateway",
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "dev": "rimraf ./dist && tsc && node ./dist/index.js"
+  },
+  "dependencies": {
+    "@apollo/gateway": "^2.7.2",
+    "@apollo/server": "^4.10.2",
+    "apollo-server": "^3.13.0",
+    "apollo-server-express": "^3.13.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-jwt": "^8.4.1",
+    "graphql": "^16.8.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "jwt-decode": "^4.0.0",
+    "typescript": "^5.4.3"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}
