@@ -20,14 +20,13 @@ async function main() {
         jwt({
             secret: secret as GetVerificationKey,
             algorithms: ['RS256'],
-            audience: 'https://dev.thrum.co',
-            credentialsRequired: false
+            credentialsRequired: true
         })
     );
 
     const gateway = new ApolloGateway({
         serviceList: [
-            {name: 'organizations', url: 'http://localhost:4000/query'},
+            {name: 'organizations', url: 'http://localhost:4000/'},
         ],
         buildService({name, url}) {
             return new RemoteGraphQLDataSource({
