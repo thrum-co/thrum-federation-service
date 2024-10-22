@@ -20,7 +20,7 @@ async function main() {
         jwt({
             secret: secret as GetVerificationKey,
             algorithms: ['RS256'],
-            credentialsRequired: true
+            credentialsRequired: false
         })
     );
 
