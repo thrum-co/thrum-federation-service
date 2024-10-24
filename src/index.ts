@@ -26,7 +26,7 @@ async function main() {
 
     const gateway = new ApolloGateway({
         serviceList: [
-            {name: 'organizations', url: 'http://thrum-organizations-service.dev.svc.cluster.local/query'},
+            {name: 'organizations', url: 'http://thrum-organizations-service.default.svc.cluster.local/query'},
         ],
         buildService({name, url}) {
             return new RemoteGraphQLDataSource({
