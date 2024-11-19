@@ -12,7 +12,8 @@ async function main() {
     const jwtCheck = auth({
         audience: 'https://api.thrum.co',
         issuerBaseURL: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/',
-        tokenSigningAlg: 'RS256'
+        tokenSigningAlg: 'RS256',
+        authRequired: false
     });
 
     app.use(jwtCheck);
