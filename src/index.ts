@@ -1,10 +1,10 @@
 import {ApolloServer} from 'apollo-server-express';
 import {ApolloGateway, RemoteGraphQLDataSource} from "@apollo/gateway";
 import express from 'express';
-import { auth } from 'express-oauth2-jwt-bearer'
 import { createServer } from 'http';
 import cors from 'cors';
 
+import {auth} from "express-oauth2-jwt-bearer";
 
 async function main() {
     const app = express()
@@ -13,7 +13,8 @@ async function main() {
         audience: 'https://api.thrum.co',
         issuerBaseURL: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/',
         tokenSigningAlg: 'RS256'
-    })
+    });
+
     app.use(jwtCheck);
 
     const gateway = new ApolloGateway({
