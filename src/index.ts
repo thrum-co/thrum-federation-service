@@ -1,28 +1,20 @@
 import {ApolloServer} from 'apollo-server-express';
 import {ApolloGateway, RemoteGraphQLDataSource} from "@apollo/gateway";
 import express from 'express';
+import { auth } from 'express-oauth2-jwt-bearer'
 import { createServer } from 'http';
-import {expressjwt as jwt, GetVerificationKey} from "express-jwt";
-import jwksRsa from 'jwks-rsa'
 import cors from 'cors';
 
 
 async function main() {
     const app = express()
     app.use(cors());
-    const secret = jwksRsa.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 60,
-        jwksUri: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/.well-known/jwks.json'
+    const jwtCheck = auth({
+        audience: 'https://api.thrum.co',
+        issuerBaseURL: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/',
+        tokenSigningAlg: 'RS256'
     })
-    app.use(
-        jwt({
-            secret: secret as GetVerificationKey,
-            algorithms: ['RS256'],
-            credentialsRequired: false
-        })
-    );
+    app.use(jwtCheck);
 
     const gateway = new ApolloGateway({
         serviceList: [
@@ -33,6 +25,7 @@ async function main() {
             return new RemoteGraphQLDataSource({
                 url,
                 willSendRequest({request, context}) {
+                    console.log(context.user);
                     request.http?.headers.set('user', context.user ? JSON.stringify(context.user) : "");
                     request.http?.headers.set('authorization', context.authorization || "");
                 }
