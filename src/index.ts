@@ -14,7 +14,7 @@ async function main() {
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 60,
-        jwksUri: 'https://dev-qqza0qh0olb1esh4.us.auth0.com/.well-known/jwks.json'
+        jwksUri: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/.well-known/jwks.json'
     })
     app.use(
         jwt({
