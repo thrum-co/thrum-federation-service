@@ -10,7 +10,7 @@ async function main() {
     const app = express()
     app.use(cors());
     const jwtCheck = auth({
-        audience: 'https://api.thrum.co',
+        audience: 'https://app.quarq.ai',
         issuerBaseURL: 'https://dev-bgp2nowofpq65ihn.us.auth0.com/',
         tokenSigningAlg: 'RS256',
         authRequired: false
